@@ -143,7 +143,7 @@ Arquivo principal da aplicação que executa o fluxo demonstrativo:
 
 - **Linguagem**: C#
 - **Plataforma**: .NET 10.0 (Console Application)
-- **IDE recomendada**: Visual Studio Code / Visual Studio 2022+ com C# Dev Kit
+- **IDE recomendada**: Visual Studio Code
 
 ---
 
