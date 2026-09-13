@@ -4,19 +4,12 @@ using ClientLab.Models;
 
 namespace ClientLab.Services;
 
-/// <summary>
-/// Serviço responsável pela manipulação (gravação e leitura) de arquivos .txt de clientes
-/// utilizando a biblioteca padrão System.IO do .NET.
-/// </summary>
+
 public static class ClienteArquivoService
 {
     private static readonly CultureInfo CulturaBrasil = new("pt-BR");
 
-    /// <summary>
-    /// Gera o nome do arquivo .txt baseado no nome do cliente, sanitizando caracteres inválidos.
-    /// </summary>
-    /// <param name="pessoa">Instância de Pessoa (PessoaFisica ou PessoaJuridica).</param>
-    /// <returns>Nome do arquivo no formato '{Nome}.txt'.</returns>
+
     public static string ObterNomeArquivo(Pessoa pessoa)
     {
         ArgumentNullException.ThrowIfNull(pessoa);
@@ -25,11 +18,6 @@ public static class ClienteArquivoService
         return $"{nomeSanitizado}.txt";
     }
 
-    /// <summary>
-    /// Formata os dados cadastrais e financeiros do cliente em formato textual estruturado.
-    /// </summary>
-    /// <param name="pessoa">Instância do cliente.</param>
-    /// <returns>Texto estruturado pronto para gravação em arquivo.</returns>
     public static string FormatarConteudoTxt(Pessoa pessoa)
     {
         ArgumentNullException.ThrowIfNull(pessoa);
@@ -98,12 +86,7 @@ public static class ClienteArquivoService
         return sb.ToString();
     }
 
-    /// <summary>
-    /// Salva as informações do cliente em um arquivo .txt nomeado com o nome do cliente.
-    /// </summary>
-    /// <param name="pessoa">Instância de Pessoa a ser gravada.</param>
-    /// <param name="diretorioDestino">Diretório onde o arquivo será salvo. Se nulo, salva no diretório atual.</param>
-    /// <returns>Caminho absoluto do arquivo criado.</returns>
+
     public static string SalvarEmArquivoTxt(Pessoa pessoa, string? diretorioDestino = null)
     {
         ArgumentNullException.ThrowIfNull(pessoa);
@@ -121,17 +104,11 @@ public static class ClienteArquivoService
         var caminhoCompleto = Path.Combine(diretorio, nomeArquivo);
         var conteudo = FormatarConteudoTxt(pessoa);
 
-        // Operação de escrita usando a biblioteca do .NET (System.IO.File)
         File.WriteAllText(caminhoCompleto, conteudo, Encoding.UTF8);
 
         return Path.GetFullPath(caminhoCompleto);
     }
 
-    /// <summary>
-    /// Lê e retorna o conteúdo textual de um arquivo .txt existente em disco.
-    /// </summary>
-    /// <param name="caminhoArquivo">Caminho do arquivo a ser lido.</param>
-    /// <returns>Conteúdo lido do arquivo.</returns>
     public static string LerArquivoTxt(string caminhoArquivo)
     {
         if (string.IsNullOrWhiteSpace(caminhoArquivo))
@@ -144,13 +121,9 @@ public static class ClienteArquivoService
             throw new FileNotFoundException($"O arquivo '{caminhoArquivo}' não foi encontrado.");
         }
 
-        // Operação de leitura usando a biblioteca do .NET (System.IO.File)
         return File.ReadAllText(caminhoArquivo, Encoding.UTF8);
     }
 
-    /// <summary>
-    /// Remove caracteres inválidos do nome para uso seguro no sistema de arquivos do sistema operacional.
-    /// </summary>
     private static string SanitizarNomeArquivo(string nome)
     {
         var invalidos = Path.GetInvalidFileNameChars();
