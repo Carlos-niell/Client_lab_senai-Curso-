@@ -27,7 +27,13 @@ ClientLab/
 │   ├── Pessoa.cs             # Classe base abstrata com dados comuns e contrato PagarImposto
 │   ├── PessoaFisica.cs       # Especialização para Pessoa Física (CPF, maioridade, imposto 3%)
 │   └── PessoaJuridica.cs     # Especialização para Pessoa Jurídica (CNPJ, Razão Social, imposto 5%)
+├── Testes/
+│   ├── EnderecoTests.cs      # Testes unitários xUnit para o modelo Endereco
+│   ├── PessoaFisicaTests.cs  # Testes unitários xUnit para cálculo de imposto (3%) e CPF
+│   ├── PessoaJuridicaTests.cs# Testes unitários xUnit para cálculo de imposto (5%) e CNPJ
+│   └── Testes.csproj         # Configurações do projeto de testes xUnit
 ├── Program.cs                # Ponto de entrada com demonstração completa e testes
+├── ClientLab.sln             # Solução .NET agrupando aplicação e testes
 ├── ClientLab.csproj          # Configurações do projeto .NET 10
 ├── .gitignore                # Arquivos ignorados no versionamento Git
 └── README.md                 # Documentação completa do projeto
@@ -175,6 +181,16 @@ Herda de `Pessoa` e implementa as especificidades para empresas e organizações
                Execução concluída com sucesso!               
    ==========================================================
    ```
+
+### 🧪 Executando os Testes Automatizados (xUnit)
+Para rodar a suíte completa de testes unitários automatizados cobrindo cálculos de impostos, regras de maioridade, validações de CPF/CNPJ e modelo de endereço:
+```powershell
+dotnet test
+```
+Saída esperada:
+```text
+Aprovado!  – Com falha: 0, Aprovado: 28, Ignorado: 0, Total: 28, Duração: ~350 ms - Testes.dll
+```
 
 ---
 
