@@ -9,7 +9,7 @@ public sealed class PessoaJuridica : Pessoa
 
     public PessoaJuridica(
         string nome,
-        string endereco,
+        Endereco endereco,
         string telefone,
         string cnpj,
         string razaoSocial)
@@ -17,6 +17,39 @@ public sealed class PessoaJuridica : Pessoa
     {
         CNPJ = ValidarCnpj(cnpj);
         RazaoSocial = ExigirTexto(razaoSocial, nameof(razaoSocial));
+    }
+
+    public PessoaJuridica(
+        string nome,
+        string logradouro,
+        string numero,
+        string bairro,
+        string cidade,
+        string estado,
+        string cep,
+        string telefone,
+        string cnpj,
+        string razaoSocial,
+        string complemento = "")
+        : this(
+            nome,
+            new Endereco(logradouro, numero, bairro, cidade, estado, cep, complemento),
+            telefone,
+            cnpj,
+            razaoSocial)
+    {
+    }
+
+    public override void PagarImposto(decimal valor)
+    {
+        if (valor <= 0)
+        {
+            throw new ArgumentException("O valor para cálculo do imposto deve ser maior que zero.", nameof(valor));
+        }
+
+        Valor = valor;
+        ValorImposto = valor * 0.05m;
+        Total = valor + ValorImposto;
     }
 
     private static string ValidarCnpj(string cnpj)

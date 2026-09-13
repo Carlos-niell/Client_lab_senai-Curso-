@@ -1,4 +1,4 @@
-# 🏢 ClientLab - Sistema de Cadastro de Clientes (POO em C#)
+# 🏢 ClientLab - Sistema de Cadastro e Gestão de Clientes (POO em C#)
 
 Projeto desenvolvido para a atividade do curso **SENAI**, com foco na aplicação prática dos pilares da **Programação Orientada a Objetos (POO)** utilizando **C#** e **.NET 10**.
 
@@ -6,9 +6,15 @@ Projeto desenvolvido para a atividade do curso **SENAI**, com foco na aplicaçã
 
 ## 📌 Visão Geral do Projeto
 
-O **ClientLab** é uma aplicação de console em C# que simula um sistema de gestão e validação cadastral de clientes, divididos entre **Pessoa Física** e **Pessoa Jurídica**. 
+O **ClientLab** é uma aplicação de console em C# que gerencia o cadastro e operações financeiras de clientes, divididos entre **Pessoa Física** e **Pessoa Jurídica**. 
 
-O projeto implementa regras de negócio estritas diretamente no domínio através de construtores com validações automáticas, garantindo que nenhum objeto seja instanciado em um estado inconsistente ou inválido.
+Nesta versão evoluída, o sistema implementa:
+1. **Composição e Modelagem de Endereços**: Uma classe `Endereco` estruturada com atributos completos (logradouro, número, complemento, bairro, cidade, estado e CEP) e validações.
+2. **Cálculo Polimórfico de Impostos**:
+   - **Pessoa Física**: cálculo de imposto de **3%** sobre o valor base.
+   - **Pessoa Jurídica**: cálculo de imposto de **5%** sobre o valor base.
+3. **Controle Financeiro de Transações**: Armazenamento e exibição de `Valor`, `ValorImposto` e `Total`.
+4. **Validações Cadastrais Rígidas**: Validação completa de CPF, CNPJ (algoritmo Módulo 11) e verificação de maioridade (18+ anos).
 
 ---
 
@@ -17,10 +23,11 @@ O projeto implementa regras de negócio estritas diretamente no domínio atravé
 ```text
 ClientLab/
 ├── Modelos/
-│   ├── Pessoa.cs             # Classe base abstrata com dados comuns
-│   ├── PessoaFisica.cs       # Especialização para Pessoa Física (CPF, maioridade)
-│   └── PessoaJuridica.cs     # Especialização para Pessoa Jurídica (CNPJ, Razão Social)
-├── Program.cs                # Ponto de entrada com demonstração e testes de validação
+│   ├── Endereco.cs           # Modelo de valor estruturado para endereço com validações
+│   ├── Pessoa.cs             # Classe base abstrata com dados comuns e contrato PagarImposto
+│   ├── PessoaFisica.cs       # Especialização para Pessoa Física (CPF, maioridade, imposto 3%)
+│   └── PessoaJuridica.cs     # Especialização para Pessoa Jurídica (CNPJ, Razão Social, imposto 5%)
+├── Program.cs                # Ponto de entrada com demonstração completa e testes
 ├── ClientLab.csproj          # Configurações do projeto .NET 10
 ├── .gitignore                # Arquivos ignorados no versionamento Git
 └── README.md                 # Documentação completa do projeto
@@ -30,111 +37,143 @@ ClientLab/
 
 ## 🏗️ Modelagem e Explicação das Classes
 
-### 1. `Pessoa` (Classe Abstrata Base)
+### 1. `Endereco` (Classe de Modelo)
+Localizada em: `Modelos/Endereco.cs`
+
+Modela o endereço físico do cliente com alto grau de detalhamento e validação.
+
+* **Propriedades**:
+  * `Logradouro` (`string`): Rua, avenida, praça, etc.
+  * `Numero` (`string`): Número do imóvel.
+  * `Complemento` (`string`): Informação adicional (apto, bloco, sala).
+  * `Bairro` (`string`): Bairro da localidade.
+  * `Cidade` (`string`): Município.
+  * `Estado` (`string`): UF/Estado.
+  * `Cep` (`string`): Código de Endereçamento Postal formatado (`00000-000`).
+* **Regras de Negócio**:
+  * Valida preenchimento obrigatório de todos os campos principais.
+  * Valida se o CEP possui exatamente 8 dígitos numéricos.
+  * Método `ObterEnderecoCompleto()` e sobreposição de `ToString()` para exibição padronizada.
+
+---
+
+### 2. `Pessoa` (Classe Abstrata Base)
 Localizada em: `Modelos/Pessoa.cs`
 
-A classe `Pessoa` define o contrato e os atributos fundamentais que todo cliente deve possuir no sistema.
+Define o contrato e os atributos fundamentais comuns a todos os clientes.
 
-* **Modificador `abstract`**: Não permite instanciação direta (`new Pessoa(...)`), servindo exclusivamente como classe pai para as especializações.
+* **Modificador `abstract`**: Não permite instanciação direta (`new Pessoa(...)`).
 * **Propriedades**:
   * `Nome` (`string`): Nome do cliente ou titular.
-  * `Endereco` (`string`): Endereço completo.
+  * `Endereco` (`Endereco`): Objeto estruturado de endereço (Composição).
   * `Telefone` (`string`): Número de telefone para contato.
-* **Encapsulamento**: Todas as propriedades possuem `get; private set;`, impedindo alterações externas após a criação.
-* **Validação `ExigirTexto`**: Método protegido e estático que valida se o texto não é nulo, vazio ou composto apenas de espaços em branco, lançando `ArgumentException` caso o campo não seja preenchido.
+  * `Valor` (`decimal`): Valor base informado para cálculo tributário.
+  * `ValorImposto` (`decimal`): Valor calculado do imposto devido.
+  * `Total` (`decimal`): Valor total com o imposto incluso (`Valor + ValorImposto`).
+* **Método Abstrato**:
+  * `public abstract void PagarImposto(decimal valor)`: Contrato obrigatório implementado por cada subclasse.
 
 ---
 
-### 2. `PessoaFisica` (Classe Selada)
+### 3. `PessoaFisica` (Classe Selada)
 Localizada em: `Modelos/PessoaFisica.cs`
 
-Herda de `Pessoa` e implementa os requisitos específicos para pessoas naturais.
+Herda de `Pessoa` e implementa as especificidades de pessoas naturais.
 
-* **Modificador `sealed`**: Impede derivação adicional, selando o comportamento da classe.
+* **Modificador `sealed`**: Impede derivação adicional.
 * **Propriedades Adicionais**:
   * `CPF` (`string`): Cadastro de Pessoa Física (armazenado apenas com dígitos numéricos).
-  * `DataNascimento` (`DateOnly`): Data de nascimento do cliente.
+  * `DataNascimento` (`DateOnly`): Data de nascimento do titular.
 * **Regras de Negócio e Validações**:
-  * **Validação de CPF (`ValidarCpf`)**:
-    * Remove formatação (pontos e traços) via Expressão Regular (`Regex`).
-    * Exige exatamente 11 dígitos numéricos.
-    * Rejeita sequências com dígitos repetidos (ex: `111.111.111-11`, `000.000.000-00`).
-  * **Validação de Idade (`ValidarDataNascimento`)**:
-    * Calcula a idade exata com base na data atual (`DateTime.Today`).
-    * Exige idade **mínima de 18 anos**.
-    * Rejeita datas futuras ou menores de idade, lançando `ArgumentException`.
+  * **Cálculo de Imposto (`PagarImposto`)**:
+    * Alíquota de **3%** (`valor * 0.03m`).
+    * `Total` = `valor + ValorImposto`.
+  * **Validação de CPF (`ValidarCpf`)**: Exige 11 dígitos numéricos e rejeita dígitos repetidos.
+  * **Validação de Idade (`ValidarDataNascimento`)**: Exige idade **mínima de 18 anos**.
 
 ---
 
-### 3. `PessoaJuridica` (Classe Selada)
+### 4. `PessoaJuridica` (Classe Selada)
 Localizada em: `Modelos/PessoaJuridica.cs`
 
-Herda de `Pessoa` e implementa os requisitos para empresas e organizações.
+Herda de `Pessoa` e implementa as especificidades para empresas e organizações.
 
-* **Modificador `sealed`**: Impede que a classe seja herdada.
+* **Modificador `sealed`**: Impede herança da classe.
 * **Propriedades Adicionais**:
   * `CNPJ` (`string`): Cadastro Nacional da Pessoa Jurídica (armazenado apenas com dígitos numéricos).
-  * `RazaoSocial` (`string`): Nome oficial de registro da empresa.
+  * `RazaoSocial` (`string`): Razão social registrada.
 * **Regras de Negócio e Validações**:
-  * **Validação da Razão Social**: Utiliza o método herdado `ExigirTexto` para garantir que o campo esteja preenchido.
+  * **Cálculo de Imposto (`PagarImposto`)**:
+    * Alíquota de **5%** (`valor * 0.05m`).
+    * `Total` = `valor + ValorImposto`.
   * **Validação Completa de CNPJ (`ValidarCnpj` e `CalcularDigito`)**:
-    * Remove caracteres não numéricos via `Regex`.
-    * Verifica se o CNPJ possui exatamente 14 dígitos e descarta sequências repetidas.
-    * **Algoritmo Módulo 11**: Realiza o cálculo matemático dos dois dígitos verificadores aplicando as matrizes de pesos ponderados oficiais da Receita Federal:
-      * **1º Dígito**: pesos `[5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]`.
-      * **2º Dígito**: pesos `[6, 5, 4, 3, 2, 9, 8, 7, 6, 5, 4, 3, 2]`.
-    * Se os dígitos calculados divergirem dos informados, lança `ArgumentException`.
-
----
-
-### 4. `Program.cs` (Ponto de Entrada e Demonstração)
-Arquivo principal da aplicação que executa o fluxo demonstrativo:
-
-1. **Instanciação com Sucesso**:
-   * Cria uma `PessoaFisica` com dados válidos e maior de idade.
-   * Cria uma `PessoaJuridica` com CNPJ válido e razão social preenchida.
-   * Exibe as informações cadastradas no console.
-2. **Tratamento de Exceções (`try / catch`)**:
-   * Tenta cadastrar uma `PessoaFisica` menor de idade e captura a `ArgumentException` exibindo a mensagem explicativa.
-   * Tenta cadastrar uma `PessoaJuridica` com CNPJ inválido e captura o erro sem derrubar o programa.
+    * Algoritmo Módulo 11 com pesos oficiais da Receita Federal para os dois dígitos verificadores.
 
 ---
 
 ## 💡 Pilares de POO Demonstrados
 
-| Pilar | Como foi aplicado |
+| Pilar | Aplicação Prática no Projeto |
 | :--- | :--- |
-| **Abstração** | A classe `Pessoa` isola conceitos essenciais de um cliente genérico, servindo como modelo base sem permitir instâncias diretas. |
-| **Encapsulamento** | Propriedades com `private set`, métodos utilitários privados/protegidos e validações automáticas no construtor que protegem o estado interno do objeto. |
-| **Herança** | `PessoaFisica` e `PessoaJuridica` herdam atributos e métodos comuns de `Pessoa` (`base(...)`), evitando duplicação de código. |
-| **Polimorfismo e Reutilização** | Reutilização de métodos de validação (`ExigirTexto`) e padronização do contrato de entidades. |
+| **Abstração** | A classe `Pessoa` isola conceitos essenciais de um cliente genérico e define o contrato `PagarImposto`. |
+| **Encapsulamento** | Propriedades com `get; private set;` / `protected set;` e validações automáticas que protegem o estado interno dos objetos. |
+| **Herança** | `PessoaFisica` e `PessoaJuridica` herdam atributos comuns, métodos e propriedades financeiras de `Pessoa` via `base(...)`. |
+| **Polimorfismo** | O método abstrato `PagarImposto` é sobrescrito (`override`) com regras fiscais distintas para PF (3%) e PJ (5%). |
+| **Composição** | `Pessoa` possui uma instância de `Endereco`, desacoplando a estrutura de localização do cadastro geral. |
 
 ---
 
 ## 🚀 Como Executar o Projeto
 
 ### Pré-requisitos
-* [.NET SDK 10.0](https://dotnet.microsoft.com/download) (ou versão compatível)
+* [.NET SDK 10.0](https://dotnet.microsoft.com/download) (ou compatível)
 
 ### Passos para Execução
-1. Clone o repositório ou abra a pasta do projeto:
+1. Clone o repositório ou navegue até a pasta do projeto:
    ```powershell
    git clone https://github.com/Carlos-niell/Client_lab_senai-Curso-.git
    cd ClientLab
    ```
 
-2. Compile e execute o projeto via CLI:
+2. Compile e execute a aplicação:
    ```powershell
    dotnet run
    ```
 
-3. Exemplo de saída esperada no console:
+3. Exemplo de saída no console:
    ```text
-   === ClientLab ===
-   Pessoa física cadastrada: Ana Souza - CPF 52998224725
-   Pessoa jurídica cadastrada: ClientLab Tecnologia Ltda. - CNPJ 11222333000181
-   Erro de pessoa física: O cadastro permite apenas pessoas com idade igual ou superior a 18 anos. (Parameter 'dataNascimento')
-   Erro de pessoa jurídica: O CNPJ informado não é válido. (Parameter 'cnpj')
+   ==========================================================
+           🏢 ClientLab - Sistema de Gestão de Clientes       
+   ==========================================================
+
+   --- 👤 Cadastro de Pessoa Física ---
+   Nome:             Carlos Daniel
+   CPF:              52998224725
+   Nascimento:       12/05/1990
+   Telefone:         (11) 99999-0000
+   Endereço:         Rua das Flores, 100, Apto 42 - Jardim Primavera, São Paulo/SP - CEP: 01001-000
+   Valor Base:       R$ 1.000,00
+   Imposto (3%):     R$ 30,00
+   Total a Pagar:    R$ 1.030,00
+
+   --- 🏢 Cadastro de Pessoa Jurídica ---
+   Nome Fantasia:    ClientLab Tecnologia
+   Razão Social:     ClientLab Tecnologia Ltda.
+   CNPJ:             11222333000181
+   Telefone:         (11) 3333-4444
+   Endereço:         Avenida Central, 500, Torre A, Sala 1502 - Centro Empresarial, São Paulo/SP - CEP: 01310-100
+   Valor Base:       R$ 10.000,00
+   Imposto (5%):     R$ 500,00
+   Total a Pagar:    R$ 10.500,00
+
+   --- 🧪 Validações de Regras de Negócio ---
+   [Esperado] Validação Idade: O cadastro permite apenas pessoas com idade igual ou superior a 18 anos. (Parameter 'dataNascimento')
+   [Esperado] Validação CNPJ:  O CNPJ informado não é válido. (Parameter 'cnpj')
+   [Esperado] Validação Valor: O valor para cálculo do imposto deve ser maior que zero. (Parameter 'valor')
+
+   ==========================================================
+               Execução concluída com sucesso!               
+   ==========================================================
    ```
 
 ---

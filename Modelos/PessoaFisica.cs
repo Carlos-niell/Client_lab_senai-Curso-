@@ -9,7 +9,7 @@ public sealed class PessoaFisica : Pessoa
 
     public PessoaFisica(
         string nome,
-        string endereco,
+        Endereco endereco,
         string telefone,
         string cpf,
         DateOnly dataNascimento)
@@ -17,6 +17,39 @@ public sealed class PessoaFisica : Pessoa
     {
         CPF = ValidarCpf(cpf);
         DataNascimento = ValidarDataNascimento(dataNascimento);
+    }
+
+    public PessoaFisica(
+        string nome,
+        string logradouro,
+        string numero,
+        string bairro,
+        string cidade,
+        string estado,
+        string cep,
+        string telefone,
+        string cpf,
+        DateOnly dataNascimento,
+        string complemento = "")
+        : this(
+            nome,
+            new Endereco(logradouro, numero, bairro, cidade, estado, cep, complemento),
+            telefone,
+            cpf,
+            dataNascimento)
+    {
+    }
+
+    public override void PagarImposto(decimal valor)
+    {
+        if (valor <= 0)
+        {
+            throw new ArgumentException("O valor para cálculo do imposto deve ser maior que zero.", nameof(valor));
+        }
+
+        Valor = valor;
+        ValorImposto = valor * 0.03m;
+        Total = valor + ValorImposto;
     }
 
     private static string ValidarCpf(string cpf)
