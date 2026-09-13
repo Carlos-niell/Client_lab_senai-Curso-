@@ -1,5 +1,6 @@
 using System.Globalization;
 using ClientLab.Models;
+using ClientLab.Services;
 
 CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("pt-BR");
 CultureInfo.DefaultThreadCurrentUICulture = new CultureInfo("pt-BR");
@@ -66,7 +67,25 @@ Console.WriteLine($"Valor Base:       {pessoaJuridica.Valor:C2}");
 Console.WriteLine($"Imposto (5%):     {pessoaJuridica.ValorImposto:C2}");
 Console.WriteLine($"Total a Pagar:    {pessoaJuridica.Total:C2}\n");
 
-// 3. Testes de Validações e Regras de Negócio (Tratamento de Exceções)
+// 3. Gravação e Leitura de Arquivos .TXT utilizando a biblioteca do .NET (System.IO)
+Console.WriteLine("--- 📁 Manipulação de Arquivos .TXT (.NET System.IO) ---");
+
+// Salva o arquivo de Pessoa Física com o nome do cliente: 'Carlos Daniel.txt'
+var caminhoArquivoPf = ClienteArquivoService.SalvarEmArquivoTxt(pessoaFisica);
+Console.WriteLine($"[Gravado] Arquivo PF gerado: {Path.GetFileName(caminhoArquivoPf)}");
+Console.WriteLine($"          Caminho: {caminhoArquivoPf}");
+
+// Salva o arquivo de Pessoa Jurídica com o nome da empresa/cliente: 'ClientLab Tecnologia.txt'
+var caminhoArquivoPj = ClienteArquivoService.SalvarEmArquivoTxt(pessoaJuridica);
+Console.WriteLine($"[Gravado] Arquivo PJ gerado: {Path.GetFileName(caminhoArquivoPj)}");
+Console.WriteLine($"          Caminho: {caminhoArquivoPj}\n");
+
+// Demonstração da leitura de arquivo do disco utilizando a biblioteca do .NET
+Console.WriteLine("--- 📖 Conteúdo Lido do Arquivo TXT (Exemplo PF) ---");
+var conteudoLidoPf = ClienteArquivoService.LerArquivoTxt(caminhoArquivoPf);
+Console.WriteLine(conteudoLidoPf);
+
+// 4. Testes de Validações e Regras de Negócio (Tratamento de Exceções)
 Console.WriteLine("--- 🧪 Validações de Regras de Negócio ---");
 
 try

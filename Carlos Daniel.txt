@@ -1,0 +1,27 @@
+﻿==================================================================
+                  CLIENTLAB - REGISTRO DE CLIENTE                 
+==================================================================
+Data/Hora da Gravação: 12/09/2026 23:44:50
+
+--- 👤 DADOS DE PESSOA FÍSICA ---
+Nome:               Carlos Daniel
+CPF:                52998224725
+Data de Nascimento: 12/05/1990
+Telefone:           (11) 99999-0000
+
+--- 📍 ENDEREÇO ---
+Logradouro:         Rua das Flores, Nº 100
+Complemento:        Apto 42
+Bairro:             Jardim Primavera
+Cidade/UF:          São Paulo/SP
+CEP:                01001-000
+
+--- 💰 INFORMAÇÕES FINANCEIRAS ---
+Valor Base:         R$ 1.000,00
+Alíquota Imposto:   3%
+Valor do Imposto:   R$ 30,00
+Total com Imposto:  R$ 1.030,00
+
+==================================================================
+                     FIM DO REGISTRO                              
+==================================================================

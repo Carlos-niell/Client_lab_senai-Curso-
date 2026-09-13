@@ -1,6 +1,6 @@
 # 🏢 ClientLab - Sistema de Cadastro e Gestão de Clientes (POO em C#)
 
-Projeto desenvolvido para a atividade do curso **SENAI**, com foco na aplicação prática dos pilares da **Programação Orientada a Objetos (POO)** utilizando **C#** e **.NET 10**.
+Projeto desenvolvido para a atividade do curso **SENAI**, com foco na aplicação prática dos pilares da **Programação Orientada a Objetos (POO)** e **Manipulação de Arquivos (`System.IO`)** utilizando **C#** e **.NET 10**.
 
 ---
 
@@ -15,6 +15,10 @@ Nesta versão evoluída, o sistema implementa:
    - **Pessoa Jurídica**: cálculo de imposto de **5%** sobre o valor base.
 3. **Controle Financeiro de Transações**: Armazenamento e exibição de `Valor`, `ValorImposto` e `Total`.
 4. **Validações Cadastrais Rígidas**: Validação completa de CPF, CNPJ (algoritmo Módulo 11) e verificação de maioridade (18+ anos).
+5. **📁 Manipulação e Persistência em Arquivos .TXT (`System.IO`)**:
+   - Geração automática de arquivos `.txt` onde o nome do arquivo corresponde ao **nome do cliente** (`Carlos Daniel.txt` e `ClientLab Tecnologia.txt`).
+   - Gravação de dados cadastrais, localização e resumo financeiro.
+   - Operações de leitura em disco para consulta posterior dos dados persistidos.
 
 ---
 
@@ -23,25 +27,30 @@ Nesta versão evoluída, o sistema implementa:
 ```text
 ClientLab/
 ├── Modelos/
-│   ├── Endereco.cs           # Modelo de valor estruturado para endereço com validações
-│   ├── Pessoa.cs             # Classe base abstrata com dados comuns e contrato PagarImposto
-│   ├── PessoaFisica.cs       # Especialização para Pessoa Física (CPF, maioridade, imposto 3%)
-│   └── PessoaJuridica.cs     # Especialização para Pessoa Jurídica (CNPJ, Razão Social, imposto 5%)
+│   ├── Endereco.cs                  # Modelo estruturado para endereço com validações
+│   ├── Pessoa.cs                    # Classe base abstrata com dados comuns e contrato PagarImposto
+│   ├── PessoaFisica.cs              # Especialização para Pessoa Física (CPF, maioridade, imposto 3%)
+│   └── PessoaJuridica.cs            # Especialização para Pessoa Jurídica (CNPJ, Razão Social, imposto 5%)
+├── Servicos/
+│   └── ClienteArquivoService.cs     # Serviço de manipulação (gravação e leitura) de arquivos .TXT via System.IO
 ├── Testes/
-│   ├── EnderecoTests.cs      # Testes unitários xUnit para o modelo Endereco
-│   ├── PessoaFisicaTests.cs  # Testes unitários xUnit para cálculo de imposto (3%) e CPF
-│   ├── PessoaJuridicaTests.cs# Testes unitários xUnit para cálculo de imposto (5%) e CNPJ
-│   └── Testes.csproj         # Configurações do projeto de testes xUnit
-├── Program.cs                # Ponto de entrada com demonstração completa e testes
-├── ClientLab.sln             # Solução .NET agrupando aplicação e testes
-├── ClientLab.csproj          # Configurações do projeto .NET 10
-├── .gitignore                # Arquivos ignorados no versionamento Git
-└── README.md                 # Documentação completa do projeto
+│   ├── EnderecoTests.cs             # Testes unitários xUnit para o modelo Endereco
+│   ├── PessoaFisicaTests.cs         # Testes unitários xUnit para cálculo de imposto (3%) e CPF
+│   ├── PessoaJuridicaTests.cs       # Testes unitários xUnit para cálculo de imposto (5%) e CNPJ
+│   ├── ClienteArquivoServiceTests.cs# Testes unitários xUnit para criação e leitura de arquivos .TXT
+│   └── Testes.csproj                # Configurações do projeto de testes xUnit
+├── Carlos Daniel.txt                # Arquivo TXT gerado para o cliente Pessoa Física
+├── ClientLab Tecnologia.txt         # Arquivo TXT gerado para o cliente Pessoa Jurídica
+├── Program.cs                       # Ponto de entrada com demonstração completa, I/O e validações
+├── ClientLab.slnx                    # Solução .NET agrupando aplicação e testes
+├── ClientLab.csproj                 # Configurações do projeto .NET 10
+├── .gitignore                       # Arquivos ignorados no versionamento Git
+└── README.md                        # Documentação completa do projeto
 ```
 
 ---
 
-## 🏗️ Modelagem e Explicação das Classes
+## 🏗️ Modelagem e Explicação das Classes e Serviços
 
 ### 1. `Endereco` (Classe de Modelo)
 Localizada em: `Modelos/Endereco.cs`
@@ -117,6 +126,19 @@ Herda de `Pessoa` e implementa as especificidades para empresas e organizações
 
 ---
 
+### 5. `ClienteArquivoService` (Serviço de Manipulação de Arquivos .NET)
+Localizada em: `Servicos/ClienteArquivoService.cs`
+
+Implementa operações de persistência e leitura de dados utilizando a biblioteca **`System.IO`** do .NET.
+
+* **Métodos**:
+  * `ObterNomeArquivo(Pessoa pessoa)`: Retorna o nome formatado e sanitizado do arquivo (ex: `Carlos Daniel.txt` ou `ClientLab Tecnologia.txt`).
+  * `FormatarConteudoTxt(Pessoa pessoa)`: Gera o layout textual do relatório do cliente com cabeçalho, dados pessoais, endereço e financeiro.
+  * `SalvarEmArquivoTxt(Pessoa pessoa, string? diretorioDestino)`: Grava em disco o arquivo `.txt` com `File.WriteAllText`.
+  * `LerArquivoTxt(string caminhoArquivo)`: Realiza a leitura e recuperação de dados do disco com `File.ReadAllText`.
+
+---
+
 ## 💡 Pilares de POO Demonstrados
 
 | Pilar | Aplicação Prática no Projeto |
@@ -172,6 +194,41 @@ Herda de `Pessoa` e implementa as especificidades para empresas e organizações
    Imposto (5%):     R$ 500,00
    Total a Pagar:    R$ 10.500,00
 
+   --- 📁 Manipulação de Arquivos .TXT (.NET System.IO) ---
+   [Gravado] Arquivo PF gerado: Carlos Daniel.txt
+             Caminho: C:\Users\Asus\Documents\ClientLab\Carlos Daniel.txt
+   [Gravado] Arquivo PJ gerado: ClientLab Tecnologia.txt
+             Caminho: C:\Users\Asus\Documents\ClientLab\ClientLab Tecnologia.txt
+
+   --- 📖 Conteúdo Lido do Arquivo TXT (Exemplo PF) ---
+   ==================================================================
+                     CLIENTLAB - REGISTRO DE CLIENTE                 
+   ==================================================================
+   Data/Hora da Gravação: 12/09/2026 23:44:50
+
+   --- 👤 DADOS DE PESSOA FÍSICA ---
+   Nome:               Carlos Daniel
+   CPF:                52998224725
+   Data de Nascimento: 12/05/1990
+   Telefone:           (11) 99999-0000
+
+   --- 📍 ENDEREÇO ---
+   Logradouro:         Rua das Flores, Nº 100
+   Complemento:        Apto 42
+   Bairro:             Jardim Primavera
+   Cidade/UF:          São Paulo/SP
+   CEP:                01001-000
+
+   --- 💰 INFORMAÇÕES FINANCEIRAS ---
+   Valor Base:         R$ 1.000,00
+   Alíquota Imposto:   3%
+   Valor do Imposto:   R$ 30,00
+   Total com Imposto:  R$ 1.030,00
+
+   ==================================================================
+                        FIM DO REGISTRO                              
+   ==================================================================
+
    --- 🧪 Validações de Regras de Negócio ---
    [Esperado] Validação Idade: O cadastro permite apenas pessoas com idade igual ou superior a 18 anos. (Parameter 'dataNascimento')
    [Esperado] Validação CNPJ:  O CNPJ informado não é válido. (Parameter 'cnpj')
@@ -183,13 +240,13 @@ Herda de `Pessoa` e implementa as especificidades para empresas e organizações
    ```
 
 ### 🧪 Executando os Testes Automatizados (xUnit)
-Para rodar a suíte completa de testes unitários automatizados cobrindo cálculos de impostos, regras de maioridade, validações de CPF/CNPJ e modelo de endereço:
+Para rodar a suíte completa de testes unitários automatizados cobrindo cálculos de impostos, regras de maioridade, validações de CPF/CNPJ, modelo de endereço e operações de arquivos `.txt`:
 ```powershell
 dotnet test
 ```
 Saída esperada:
 ```text
-Aprovado!  – Com falha: 0, Aprovado: 28, Ignorado: 0, Total: 28, Duração: ~350 ms - Testes.dll
+Aprovado!  – Com falha: 0, Aprovado: 35, Ignorado: 0, Total: 35, Duração: ~1 s - Testes.dll
 ```
 
 ---
@@ -198,6 +255,8 @@ Aprovado!  – Com falha: 0, Aprovado: 28, Ignorado: 0, Total: 28, Duração: ~3
 
 - **Linguagem**: C#
 - **Plataforma**: .NET 10.0 (Console Application)
+- **Manipulação de Arquivos**: `System.IO` (`File`, `Directory`, `Path`, `StringBuilder`)
+- **Testes Unitários**: xUnit & .NET Test SDK
 - **IDE recomendada**: Visual Studio Code
 
 ---

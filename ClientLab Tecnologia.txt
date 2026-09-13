@@ -1,0 +1,27 @@
+﻿==================================================================
+                  CLIENTLAB - REGISTRO DE CLIENTE                 
+==================================================================
+Data/Hora da Gravação: 12/09/2026 23:44:50
+
+--- 🏢 DADOS DE PESSOA JURÍDICA ---
+Nome Fantasia:      ClientLab Tecnologia
+Razão Social:       ClientLab Tecnologia Ltda.
+CNPJ:               11222333000181
+Telefone:           (11) 3333-4444
+
+--- 📍 ENDEREÇO ---
+Logradouro:         Avenida Central, Nº 500
+Complemento:        Torre A, Sala 1502
+Bairro:             Centro Empresarial
+Cidade/UF:          São Paulo/SP
+CEP:                01310-100
+
+--- 💰 INFORMAÇÕES FINANCEIRAS ---
+Valor Base:         R$ 10.000,00
+Alíquota Imposto:   5%
+Valor do Imposto:   R$ 500,00
+Total com Imposto:  R$ 10.500,00
+
+==================================================================
+                     FIM DO REGISTRO                              
+==================================================================
